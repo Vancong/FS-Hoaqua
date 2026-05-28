@@ -1,0 +1,112 @@
+.product_list_section {
+    margin-top: 48px;
+    margin-bottom: 48px;
+    padding: 40px 32px;
+    background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    border-radius: 24px;
+    border: 1px solid #e8f5e9;
+    box-shadow: 0 4px 24px rgba(22, 101, 52, 0.06);
+
+    .title {
+        text-align: center;
+        position: relative;
+        padding-bottom: 18px;
+        margin-bottom: 36px;
+        font-size: 28px;
+        color: #14532d;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #22c55e, #86efac);
+            border-radius: 4px;
+        }
+    }
+
+    .card {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .button {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+        padding: 8px;
+
+        .button_hover {
+            background-color: #ffffff !important;
+            border-radius: 30px !important;
+            transition: all 0.3s ease !important;
+            border-color: #22c55e !important;
+            color: #22c55e !important;
+
+            &:hover:not(:disabled) {
+                background-color: #22c55e !important;
+                color: #ffffff !important;
+                border-color: #22c55e !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(34, 197, 94, 0.25);
+            }
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    .product_list_section {
+        padding: 32px 20px;
+
+        .card {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .title {
+            font-size: 24px;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .product_list_section {
+        padding: 28px 12px;
+        border-radius: 16px;
+
+        .card {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .title {
+            font-size: 20px;
+        }
+    }
+}
+
+@media (max-width: 390px) {
+    .product_list_section {
+        padding: 22px 10px;
+        margin-top: 32px;
+        margin-bottom: 32px;
+
+        .title {
+            font-size: 18px;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+        }
+
+        .card {
+            gap: 10px;
+        }
+    }
+}

@@ -1,0 +1,82 @@
+.product-tab-content {
+  padding: 15px 0;
+  
+  p {
+    margin-bottom: 12px;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #475569;
+  }
+}
+
+.ant-tabs-nav {
+  margin-bottom: 20px !important;
+  border-bottom: 1px solid #f1f5f9;
+
+  &::before {
+    display: none;
+  }
+}
+
+.ant-tabs-tab {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  padding: 12px 18px !important;
+  transition: all 0.3s ease;
+  color: #94a3b8 !important;
+
+  &:hover {
+    color: #22c55e !important;
+    text-decoration: none;
+  }
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1e3a1e !important;
+  font-weight: 700 !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #22c55e !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+
+@media (max-width: 480px) {
+  .product-tab-content {
+    padding: 10px 0;
+    p {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+  }
+
+  // Tabs: cho phép scroll ngang, tránh xuống dòng xấu
+  .ant-tabs-nav {
+    margin-bottom: 14px !important;
+  }
+
+  .ant-tabs-nav-wrap {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-tabs-nav-list {
+    gap: 6px;
+  }
+
+  .ant-tabs-tab {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 390px) {
+  .ant-tabs-tab {
+    font-size: 12.5px !important;
+    padding: 9px 10px !important;
+  }
+}

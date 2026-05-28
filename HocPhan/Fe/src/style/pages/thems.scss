@@ -1,0 +1,20 @@
+
+$theme-colors :(
+    "main": #0a4f58,
+   
+);
+
+.color-main {
+    color: map-get($theme-colors, "main" )
+}
+.container{
+    padding: 0 120px;
+}
+
+
+.button_hover:hover {
+    background: map-get($theme-colors, "main" );
+    color: white;
+    font-weight: 600;
+
+}

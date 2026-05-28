@@ -1,0 +1,119 @@
+.custom-dropdown .ant-select-item-option {
+  padding: 0 !important;   
+  background-color: transparent !important;
+  border: none !important;
+  transition: none !important;
+}
+
+.custom-dropdown .ant-select-item-option-active {
+  background-color: transparent !important; 
+}
+
+.custom-dropdown.ant-select-dropdown,
+.custom-dropdown {
+  z-index: 2000 !important;
+}
+
+.search-option {
+    padding: 10px 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #1e3a1e;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #f0fdf4;
+        .search_right {
+            .name {
+                span {
+                    color: #22c55e;
+                }
+            }
+        }
+    }
+
+    .name {
+      color: #1e3a1e; 
+      font-weight: 600;
+      strong {
+        color: #22c55e !important; 
+        font-weight: bold;
+      }
+    }
+
+    .search_right {
+        width: 100%;
+        font-size: 13px;
+        line-height: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+
+        .price {
+            font-weight: 700;
+            font-size: 15px;
+            color: #ef4444;
+        }
+    }
+
+    .search_left {
+        display: flex;
+        align-items: center;
+        img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+    }
+}
+
+// Responsive settings
+@media (max-width: 768px) {
+    .search-option {
+        padding: 8px 12px;
+        font-size: 13px;
+        gap: 8px;
+
+        .search_right {
+            font-size: 12px;
+            .price {
+                font-size: 13px;
+            }
+        }
+        .search_left img {
+            width: 35px;
+            height: 35px;
+        }
+    }
+}
+
+.custom-auto-complete {
+    .ant-input-affix-wrapper {
+        border-color: #22c55e !important;
+        transition: all 0.3s ease;
+        background-color: #ffffff !important;
+
+        input {
+            background-color: transparent !important;
+            font-size: 14px;
+            color: #1e3a1e;
+        }
+
+        &:focus, &-focused {
+            border-color: #16a34a !important;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1) !important;
+        }
+    }
+}

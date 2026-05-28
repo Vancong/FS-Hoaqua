@@ -1,0 +1,226 @@
+.my_order {
+    margin-top: 40px;
+}
+
+.table-container {
+    margin-top: 20px;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+    table {
+        width: 100%;
+        font-size: 15px;
+        background-color: #fff;
+    }
+
+    thead {
+        background-color: #f5f7fa;
+    }
+
+    th,
+    td {
+        padding: 12px 16px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        color: #333;
+        font-weight: 600;
+    }
+
+    td {
+        color: #555;
+    }
+
+    .status_badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #fff;
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .pending {
+        background-color: #f59e0b;
+    }
+
+    .awaiting_payment {
+        background-color: #f97316;
+    }
+
+    .confirmed {
+        background-color: #10b981;
+    }
+
+    .shipping {
+        background-color: #3b82f6;
+    }
+
+    .cancelled {
+        background-color: #ef4444;
+    }
+
+    .refund_pending {
+        background-color: #fbbf24;
+    }
+
+    .refunded {
+        background-color: #6ee7b7;
+    }
+
+    .completed {
+        background-color: #16a34a;
+    }
+
+    .view_detail,
+    .action_buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn_view,
+    .btn_pay_again {
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        line-height: 1.2;
+        padding: 8px 14px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: opacity 0.2s ease;
+    }
+
+    .btn_view {
+        background-color: #3b82f6;
+        color: #fff;
+    }
+
+    .btn_pay_again {
+        background-color: #f97316;
+        color: #fff;
+
+        &:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn_view:hover,
+    .btn_pay_again:hover:not(:disabled) {
+        opacity: 0.85;
+    }
+}
+
+// Responsive cho mobile
+@media (max-width: 768px) {
+    .my_order {
+        margin-top: 20px;
+    }
+
+    .table-container {
+        padding: 0;
+        box-shadow: none;
+        background: transparent;
+
+        table {
+            border: 0;
+            width: 100%;
+        }
+
+        thead {
+            display: none;
+        }
+
+        tr {
+            background-color: #fff;
+            display: block;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border: 1px solid #eee;
+        }
+
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f5f5f5;
+            padding: 10px 0;
+            text-align: right;
+            color: #333; // Ensure text is visible
+            font-size: 14px;
+
+            &:last-child {
+                border-bottom: 0;
+                justify-content: center;
+                padding-top: 15px;
+            }
+
+            &::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #555;
+                text-transform: uppercase;
+                font-size: 12px;
+                text-align: left;
+                margin-right: 10px;
+            }
+        }
+
+        .status_badge {
+            min-width: unset;
+            font-size: 12px;
+        }
+
+        .action_buttons {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .btn_view,
+        .btn_pay_again {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .my_order {
+            margin-top: 20px;
+        }
+
+        .table-container {
+            tr {
+                padding: 10px;
+            }
+
+            td {
+                font-size: 13px;
+                padding: 8px 0;
+
+                &::before {
+                    font-size: 11px;
+                }
+            }
+
+            .status_badge {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .btn_view,
+            .btn_pay_again {
+                font-size: 13px;
+                padding: 8px;
+            }
+        }
+    }
+}
