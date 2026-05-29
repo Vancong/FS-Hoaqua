@@ -8,6 +8,7 @@ const paymentRoutes = require('./paymentRoutes');
 const statsRouter = require('./stats.router');
 const forgotPasswordRouter = require('./forgot-password.router');
 const favoriteRouter = require('./favoriteRoutes');
+const chatRouter = require('./chat.router');
 const errorHandler = require('../middleware/errorHandler.middeware');
 
 module.exports.index = (app) => {
@@ -20,5 +21,6 @@ module.exports.index = (app) => {
     app.use('/api/payment', paymentRoutes);
     app.use('/api/stats', statsRouter);
     app.use('/api/favorite', favoriteRouter);
+    app.use('/api/chat', chatRouter);
     app.use(errorHandler);
 };

@@ -17,16 +17,27 @@
   export function App() { 
     const dispatch=useDispatch();
     const user=useSelector((state =>state.user));
-    const [isLoading,setIsLoading]=useState(false);
+    const [isLoading,setIsLoading]=useState(true);
     useEffect(() => {
-      handlDetailInfoWebSite();
+      handlDetailInfoWebSite()
+      const handlGetUserAndCart= async () =>{
+          const  {decode,storeData}=handleDecode()|| {};
+            try {
+              if (decode?.id) {
+                await handlGetDetailUser(decode.id, storeData);
+                await  handlDetailCart(decode.id, storeData);
+                await handleGetUserFavorites(decode.id,storeData)
+              }     
+                
+            } catch (error) {
+              console.log('Lỗi khi lấy user:', error);;
+            }
+            finally {
+              setIsLoading(false); 
+            }
 
-      const { decode, storeData } = handleDecode() || {};
-      if (decode?.id) {
-        handlGetDetailUser(decode.id, storeData);
-        handlDetailCart(decode.id, storeData);
-        handleGetUserFavorites(decode.id, storeData);
       }
+      handlGetUserAndCart()
 
     },[])
 

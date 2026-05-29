@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { MessageOutlined, CloseOutlined, SendOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import * as ChatService from '../../services/Chat.Service';
@@ -206,7 +207,7 @@ const ChatWidget = () => {
     });
   };
 
-  return (
+  const chatUi = (
     <div className="chat-widget">
       {!isOpen && (
         <button className="chat-widget__button" onClick={handleToggle}>
@@ -265,7 +266,7 @@ const ChatWidget = () => {
                                 key={product._id || product.slug}
                                 className="chat-widget__product-link"
                                 onClick={() => {
-                                  navigate(`/product-details/${product.slug}`);
+                                  navigate(`/product-details/${product.slug || product._id}`);
                                   setIsOpen(false);
                                 }}
                               >
@@ -337,6 +338,8 @@ const ChatWidget = () => {
       )}
     </div>
   );
+
+  return createPortal(chatUi, document.body);
 };
 
 export default ChatWidget;

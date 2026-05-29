@@ -42,6 +42,15 @@ FRONTEND_URL=http://localhost:3000
 # Gửi mail (OTP / hóa đơn)
 SEND_MAIL_EMAIL=
 SEND_MAIL_PASSWORD=
+
+# Chat AI (Gemini) - https://aistudio.google.com/apikey
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.0-flash
+
+# ChatGPT (OpenAI) - https://platform.openai.com/api-keys
+# CHAT_PROVIDER=openai
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 ### Frontend (`HocPhan/Fe/.env`)
@@ -50,6 +59,7 @@ Tạo file `HocPhan/Fe/.env`:
 
 ```env
 REACT_APP_API_URL=http://localhost:3001/api
+REACT_APP_ENABLE_CHAT_WIDGET=true
 ```
 
 ## Chạy dự án (Windows / PowerShell)

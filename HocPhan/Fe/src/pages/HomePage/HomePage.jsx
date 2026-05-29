@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Slider from "react-slick";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -24,30 +24,30 @@ const HomePage = () => {
   const websiteInfo = useSelector(state => state.websiteInfo);
 
   // Đảm bảo banner/logo được cập nhật ngay sau khi admin lưu
-  useQuery({
+  const { data: websiteInfoRes } = useQuery({
     queryKey: ["websiteInfo"],
     queryFn: () => WebSiteInfoService.getInfo(),
     staleTime: 30 * 1000,
     refetchOnWindowFocus: true,
-    onSuccess: (res) => {
-      if (res?.data) dispatch(setInfo(res.data));
-    },
   });
 
-  // Fetch featured products for the "Sản phẩm nổi bật" section
-  const { data: dbProducts } = useQuery({
-    queryKey: ["homeProducts"],
-    queryFn: () => ProductService.getAllProduct({ limit: 8, isFeatured: true })
+  useEffect(() => {
+    if (websiteInfoRes?.data) dispatch(setInfo(websiteInfoRes.data));
+  }, [websiteInfoRes, dispatch]);
+
+  // Fetch products once, then derive sections on FE side
+  // (tránh trường hợp backend không hỗ trợ params isFeatured/hasDiscount -> trả rỗng)
+  const { data: dbProductsAll } = useQuery({
+    queryKey: ["homeProductsAll"],
+    queryFn: () => ProductService.getAllProduct({ limit: 24 }),
   });
 
-  // Fetch discounted products for the "Ưu đãi Khuyến mãi sốc" section
-  const { data: dbSaleProducts } = useQuery({
-    queryKey: ["homeSaleProducts"],
-    queryFn: () => ProductService.getAllProduct({ limit: 8, hasDiscount: true })
-  });
+  const allProducts = dbProductsAll?.data || [];
+  const featuredProducts = allProducts.filter((p) => p?.isFeatured === true);
+  const saleProducts = allProducts.filter((p) => Number(p?.discount || 0) > 0);
 
-  const displayProducts = dbProducts?.data || [];
-  const discountProducts = dbSaleProducts?.data || [];
+  const displayProducts = (featuredProducts.length > 0 ? featuredProducts : allProducts).slice(0, 8);
+  const discountProducts = saleProducts.slice(0, 8);
 
 
 
@@ -107,7 +107,7 @@ const HomePage = () => {
         ) : (
           <div className="hero_slide" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1610832958506-ee56336191d8?auto=format&fit=crop&q=80&w=1600')` }}>
             <div className="hero_content">
-              <span className="hero_tag">100% Organic & Fresh</span>
+              <span className="hero_tag">100% Tươi sạch & An toàn</span>
               <h1>Trái cây tươi ngon <span>mỗi ngày</span></h1>
               <p>Cam kết cung cấp các loại trái cây nội địa và nhập khẩu đạt tiêu chuẩn chất lượng cao nhất, tươi sạch đến tay người tiêu dùng.</p>
               <div className="hero_buttons">
@@ -128,9 +128,13 @@ const HomePage = () => {
         <div className="product_list_section">
           <h1 className="title">Sản phẩm nổi bật</h1>
           <div className="card">
-            {displayProducts.map((product) => (
-              <CardComponent key={product._id} product={product} {...product} />
-            ))}
+            {displayProducts.length > 0 ? (
+              displayProducts.map((product) => (
+                <CardComponent key={product._id} product={product} {...product} />
+              ))
+            ) : (
+              <div style={{ padding: 16, color: '#64748b' }}>Chưa có sản phẩm để hiển thị.</div>
+            )}
           </div>
         </div>
 

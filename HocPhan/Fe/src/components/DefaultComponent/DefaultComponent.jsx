@@ -4,7 +4,7 @@ import Footer from '../Footer/Footer'
 import ChatWidget from '../ChatWidget/ChatWidget'
 
 const DefaultCompoent = ({children}) => {
-  const isChatEnabled = String(process.env.REACT_APP_ENABLE_CHAT_WIDGET || '').toLowerCase() === 'true'
+  const isChatEnabled = String(process.env.REACT_APP_ENABLE_CHAT_WIDGET || 'true').toLowerCase() !== 'false'
   return (
     <div>
         <HeaderComponent />
