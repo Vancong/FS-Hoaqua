@@ -15,8 +15,13 @@ const sendEmail = async (email, subject, html, fromName) => {
     const displayName = (fromName || '').trim() || 'Fruit Shop';
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: { user: mailUser, pass: mailPass },
+        tls: {
+            rejectUnauthorized: false,
+        },
     });
 
     await transporter.sendMail({

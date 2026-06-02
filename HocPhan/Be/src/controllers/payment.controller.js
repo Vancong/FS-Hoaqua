@@ -52,6 +52,14 @@ const markOrderAwaitingPayment = async (orderCode) => {
     return OrderService.markVnpayAwaitingPayment(orderCode);
 };
 
+const normalizeFrontendUrl = (url) => {
+    const trimmed = String(url || 'http://localhost:3000').trim();
+    if (/^https?:\/\//i.test(trimmed)) {
+        return trimmed.replace(/\/+$/, '');
+    }
+    return `https://${trimmed.replace(/^\/+/, '').replace(/\/+$/, '')}`;
+};
+
 const redirectPaymentFailed = (res, frontendUrl, orderCode, message) => {
     const safeMessage = encodeURIComponent(message || 'Thanh toán thất bại');
     if (orderCode) {
@@ -63,7 +71,7 @@ const redirectPaymentFailed = (res, frontendUrl, orderCode, message) => {
 };
 
 module.exports.vnpayReturn = asyncHandler(async (req, res) => {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = normalizeFrontendUrl(process.env.FRONTEND_URL);
     const result = VnpayService.verifyReturnParams(req.query);
 
     if (!result.isValid) {
