@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
-  UserOutlined, AppstoreOutlined, MenuOutlined, SettingOutlined, ShoppingOutlined, BarChartOutlined
+  UserOutlined, AppstoreOutlined, MenuOutlined, SettingOutlined, ShoppingOutlined, BarChartOutlined, TagOutlined
 } from '@ant-design/icons';
 import { getItem } from '../../utils/menuUtils';
 import HeaderCompoent from '../../components/HeaderComponent/HeaderComponent';
@@ -12,6 +12,7 @@ import AdminProduct from '../../components/AdminProduct/AdminProduct';
 import AdminWebInfo from '../../components/AdminWebInfo/AdminWebInfo';
 import AdminOrder from '../../components/AdminOrder/AdminOrder';
 import AdminStats from '../../components/AdminStats/AdminStats';
+import AdminVoucher from '../../components/AdminVoucher/AdminVoucher';
 import "./AdminPage.scss"
 
 const AdminPage = () => {
@@ -32,6 +33,7 @@ const AdminPage = () => {
     getItem('Quản lý sản phẩm', 'product', <AppstoreOutlined />),
     getItem('Quản lý đơn hàng', 'order', <ShoppingOutlined />),
     getItem('Quản lý người dùng', 'user', <UserOutlined />),
+    getItem('Quản lý mã giảm giá', 'voucher', <TagOutlined />),
     getItem('Cài đặt Website', 'webInfo', <SettingOutlined />),
   ]
 
@@ -46,6 +48,7 @@ const AdminPage = () => {
       case 'user': return <AdminUser />
       case 'product': return <AdminProduct />
       case 'order': return <AdminOrder />
+      case 'voucher': return <AdminVoucher />
       case 'webInfo': return <AdminWebInfo />
       default: return <></>
     }

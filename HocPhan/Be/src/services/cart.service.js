@@ -1,5 +1,6 @@
 const Cart = require('../models/Cart.Model');
 const Product = require('../models/Product.Model');
+const createError = require('../helper/createError');
 
 const getCartDetail = async (userId) => {
     let cart = await Cart.findOne({ userId }).populate({
@@ -45,17 +46,30 @@ module.exports.create = async (userId, data) => {
         cart = await Cart.create({ userId, items: [] });
     }
 
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw createError(404, 'Sản phẩm không tồn tại');
+    }
+
     const itemIndex = cart.items.findIndex(
         (item) => item.product.toString() === productId
     );
 
+    const qtyToAdd = Number(quantity);
     if (itemIndex > -1) {
-        cart.items[itemIndex].quantity += Number(quantity);
+        const nextQty = cart.items[itemIndex].quantity + qtyToAdd;
+        if (nextQty > product.stock) {
+            throw createError(400, `Sản phẩm ${product.name} chỉ còn ${product.stock} kg trong kho`);
+        }
+        cart.items[itemIndex].quantity = nextQty;
     } else {
+        if (qtyToAdd > product.stock) {
+            throw createError(400, `Sản phẩm ${product.name} chỉ còn ${product.stock} kg trong kho`);
+        }
         cart.items.push({
             product: productId,
             price: Number(price),
-            quantity: Number(quantity),
+            quantity: qtyToAdd,
         });
     }
 
@@ -94,7 +108,12 @@ module.exports.increaseQuantity = async (userId, data) => {
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {
-        return { status: 'ERR', message: 'Giỏ hàng không tồn tại' };
+        throw createError(404, 'Giỏ hàng không tồn tại');
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw createError(404, 'Sản phẩm không tồn tại');
     }
 
     const itemIndex = cart.items.findIndex(
@@ -102,7 +121,44 @@ module.exports.increaseQuantity = async (userId, data) => {
     );
 
     if (itemIndex > -1) {
-        cart.items[itemIndex].quantity += 1;
+        const nextQty = cart.items[itemIndex].quantity + 1;
+        if (nextQty > product.stock) {
+            throw createError(400, `Sản phẩm ${product.name} chỉ còn ${product.stock} kg trong kho`);
+        }
+        cart.items[itemIndex].quantity = nextQty;
+        await cart.save();
+    }
+
+    return await getCartDetail(userId);
+};
+
+module.exports.updateQuantity = async (userId, data) => {
+    const { productId, quantity } = data;
+    const qty = Number(quantity);
+    if (Number.isNaN(qty) || qty <= 0) {
+        throw createError(400, 'Số lượng phải là số lớn hơn 0');
+    }
+
+    let cart = await Cart.findOne({ userId });
+    if (!cart) {
+        throw createError(404, 'Giỏ hàng không tồn tại');
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+        throw createError(404, 'Sản phẩm không tồn tại');
+    }
+
+    if (qty > product.stock) {
+        throw createError(400, `Sản phẩm ${product.name} chỉ còn ${product.stock} kg trong kho`);
+    }
+
+    const itemIndex = cart.items.findIndex(
+        (item) => item.product.toString() === productId
+    );
+
+    if (itemIndex > -1) {
+        cart.items[itemIndex].quantity = qty;
         await cart.save();
     }
 

@@ -127,6 +127,25 @@ module.exports.createOrder = async (userId, body) => {
             paypalOrderId: paypalOrderId || undefined,
         });
 
+        if (discountCode) {
+            try {
+                const Voucher = require('../models/Voucher.Model');
+                const voucher = await Voucher.findOne({ code: discountCode.toUpperCase() });
+                if (voucher) {
+                    voucher.usageCount += 1;
+                    const userUsageIdx = voucher.usedBy.findIndex(u => u.userId.toString() === userId.toString());
+                    if (userUsageIdx > -1) {
+                        voucher.usedBy[userUsageIdx].count += 1;
+                    } else {
+                        voucher.usedBy.push({ userId, count: 1 });
+                    }
+                    await voucher.save();
+                }
+            } catch (vErr) {
+                console.warn('Lỗi cập nhật lượt sử dụng mã giảm giá:', vErr.message);
+            }
+        }
+
         if (method === 'cod' || paid) {
             sendOrderInvoiceEmail(order, invoiceEmail);
         }

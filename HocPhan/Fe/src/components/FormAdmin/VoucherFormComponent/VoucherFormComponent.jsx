@@ -59,84 +59,56 @@ const VoucherFormComponent = ({form,onFinish,isLoading,mode = 'create' }) => {
       </Form.Item>
 
       <Form.Item
-        label="Loại giảm giá"
-        name="discountType"
-        rules={[{ required: true, message: 'Vui lòng chọn loại giảm giá' }]}
+        label="Giá trị giảm (%)"
+        name="discountValue"
+        rules={[
+          { required: true, message: 'Vui lòng nhập phần trăm giảm giá' },
+          { type: 'number', min: 1, max: 100, message: 'Phần trăm phải từ 1 đến 100' }
+        ]}
       >
-        <Radio.Group onChange={handleDiscountTypeChange}>
-          <Radio value="percentage">Phần trăm (%)</Radio>
-          <Radio value="fixed">Số tiền cố định</Radio>
-        </Radio.Group>
+        <InputNumber
+          style={{ width: 235 }}
+          min={1}
+          max={100}
+          formatter={value => value ? `${value}%` : ''}
+          parser={value => value ? value.replace('%', '') : ''}
+        />
       </Form.Item>
 
-      {discountType && (
-        <Form.Item
-          label={discountType === 'percentage' ? 'Giá trị giảm (%)' : 'Giá trị giảm (VNĐ)'}
-          name="discountValue"
-          rules={[{ required: true, message: 'Vui lòng nhập giá trị giảm' }]}
-        >
-         <InputNumber
-            style={{ width: 235 }}
-            min={discountType === 'percentage' ? 1 : 0}
-            max={discountType === 'percentage' ? 100 : undefined}
-            formatter={value => {
-                if (!value) return '';
-                if (discountType === 'percentage') {
-                return `${value}%`;
-                } else {
-                const num = Number(value.toString().replace(/,/g, ''));
-                if (isNaN(num)) return '';
-                return num.toLocaleString('vi-VN'); 
-                }
-            }}
-            parser={value => {
-                if (!value) return '';
-                if (discountType === 'percentage') {
-                return value.replace('%', '');
-                } else {
-                return value.replace(/[,.\s]/g, '');
-                }
-            }}
+      <Form.Item
+        label="Giảm tối đa (VNĐ)"
+        name="maxDiscountValue"
+        extra="Để trống nếu không giới hạn số tiền giảm tối đa"
+      >
+        <InputNumber
+          style={{ width: 235 }}
+          min={0}
+          placeholder="Không giới hạn"
+          formatter={value => {
+              if (!value) return '';
+              const num = Number(value.toString().replace(/,/g, ''));
+              if (isNaN(num)) return '';
+              return num.toLocaleString('vi-VN'); 
+          }}
+          parser={value => {
+              if (!value) return '';
+              return value.replace(/[,.\s]/g, '');
+          }}
         />
-
-
-        
-        </Form.Item>
-      )}
-
-        {discountType &&discountType==='percentage'&& (
-        <Form.Item
-          label='Giảm tối đa (VNĐ)'
-          name="maxDiscountValue"
-        >
-          <InputNumber
-            style={{ width: 235 }}
-            min={0}
-            formatter={value => {
-                if (!value) return '';
-                const num = Number(value.toString().replace(/,/g, ''));
-                if (isNaN(num)) return '';
-                return num.toLocaleString('vi-VN'); 
-                
-            }}
-            parser={value => {
-                if (!value) return '';
-                return value.replace(/[,.\s]/g, '');
-            }}
-        />
-        </Form.Item>
-       )}
+      </Form.Item>
 
       <Form.Item
-        label="Giá trị đơn hàng được sử dụng "
+        label="Giá trị đơn hàng tối thiểu"
         name="minOrderValue"
         rules={[
           { type: 'number', min: 0, message: 'Giá trị phải lớn hơn hoặc bằng 0' },
         ]}
+        extra="Đơn hàng tối thiểu cần đạt để được áp dụng (để trống nếu áp dụng cho mọi đơn hàng)"
       >
         <InputNumber
             style={{ width: 235 }}
             min={0}
+            placeholder="Áp dụng cho mọi đơn hàng"
             formatter={value => {
                 if (!value) return '';
                 const num = Number(value.toString().replace(/,/g, ''));
@@ -152,27 +124,39 @@ const VoucherFormComponent = ({form,onFinish,isLoading,mode = 'create' }) => {
       </Form.Item>
 
       <Form.Item
-        label="Số lượng mã giảm giá"
+        label="Tổng lượt sử dụng tối đa"
         name="usageLimit"   
-     
+        extra="Tổng số lần mã này có thể sử dụng (để trống nếu không giới hạn)"
       >
-        <InputComponent type="Number" />
+        <InputNumber 
+          style={{ width: 235 }}
+          min={0}
+          placeholder="Không giới hạn"
+        />
       </Form.Item>
      
      
      <Form.Item
-        label="Số lượng mã giảm giá đã dùng"
+        label="Số lượt đã sử dụng"
         name="usageCount"   
-        
       >
-        <InputComponent disabled />
+        <InputNumber 
+          style={{ width: 235 }}
+          disabled 
+          placeholder="0"
+        />
       </Form.Item>
-      
+       
      <Form.Item
-        label="Giới hạn số lần mỗi người dùng "
+        label="Giới hạn sử dụng mỗi người"
         name="userLimit"   
+        extra="Số lần tối đa mỗi tài khoản được dùng mã này (để trống nếu không giới hạn)"
       >
-        <InputComponent type='Number' />
+        <InputNumber 
+          style={{ width: 235 }}
+          min={0}
+          placeholder="Không giới hạn"
+        />
       </Form.Item>
 
         

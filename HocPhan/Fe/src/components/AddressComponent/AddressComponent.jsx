@@ -14,13 +14,22 @@ const AddressComponent = ({onAddressChange}) => {
         const fetchProvinces = async () => {
         try {
         const res = await axios.get('https://provinces.open-api.vn/api/?depth=3');
-        setProvinceList(res.data);
+        const hueProvince = res.data.find(p => p.name.includes("Huế"));
+        if (hueProvince) {
+            setProvinceList([hueProvince]);
+            setSelectedProvince(hueProvince);
+            setDistrictList(hueProvince.districts || []);
+            onAddressChange({ province: hueProvince.name, district: null, ward: null });
+        } else {
+            setProvinceList([]);
+        }
         } catch (error) {
         console.error("Lỗi khi lấy danh sách tỉnh:", error);
         }
     };
 
     fetchProvinces();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
   const handleProvinceChange =(e) =>{
@@ -33,6 +42,13 @@ const AddressComponent = ({onAddressChange}) => {
         setWardList([]); 
         setSelectedWard(null); 
         onAddressChange({ province: province.name, district: null, ward: null });
+      } else {
+        setSelectedProvince(null); 
+        setDistrictList([]);
+        setSelectedDistrict(null); 
+        setWardList([]); 
+        setSelectedWard(null); 
+        onAddressChange({ province: null, district: null, ward: null });
       }
   }
 

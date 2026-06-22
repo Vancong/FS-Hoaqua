@@ -5,6 +5,15 @@ const initialState = {
   items: [],
   totalPrice: 0,
   total: 0,
+  appliedVoucher: null,
+};
+
+const updateTotals = (state) => {
+  state.total = state.items.reduce((sum, item) => sum + item.quantity, 0);
+  state.totalPrice = state.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 };
 
 const CartSlice = createSlice({
@@ -19,11 +28,7 @@ const CartSlice = createSlice({
         );
         return { ...item, price: discountPrice };
       });
-      state.total = action.payload?.total || 0;
-      state.totalPrice = state.items.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
+      updateTotals(state);
     },
     addToCart: (state, action) => {
       const { product, quantity, price } = action.payload;
@@ -35,12 +40,10 @@ const CartSlice = createSlice({
 
       if (checkItem) {
         checkItem.quantity += quantity;
-        state.totalPrice += quantity * checkItem.price;
       } else {
         state.items.push({ product, quantity, price: discountPrice });
-        state.total += 1;
-        state.totalPrice += quantity * discountPrice;
       }
+      updateTotals(state);
     },
 
     increaseQuantity: (state, action) => {
@@ -48,8 +51,8 @@ const CartSlice = createSlice({
       const item = state.items.find((item) => item.product._id === productId);
       if (item) {
         item.quantity += 1;
-        state.totalPrice += item.price;
       }
+      updateTotals(state);
     },
 
     decreaseQuantity: (state, action) => {
@@ -57,25 +60,39 @@ const CartSlice = createSlice({
       const item = state.items.find((item) => item.product._id === productId);
       if (item && item.quantity > 1) {
         item.quantity -= 1;
-        state.totalPrice -= item.price;
       }
+      updateTotals(state);
+    },
+
+    updateQuantity: (state, action) => {
+      const { productId, quantity } = action.payload;
+      const item = state.items.find((item) => item.product._id === productId);
+      if (item) {
+        item.quantity = Number(quantity);
+      }
+      updateTotals(state);
     },
     removeCart: (state, action) => {
       const { productId } = action.payload;
       state.items = state.items.filter(
         (item) => item.product._id !== productId
       );
-      state.totalPrice = state.items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
-      state.total -= 1;
+      updateTotals(state);
     },
 
     clearCart: (state) => {
       state.items = [];
       state.total = 0;
       state.totalPrice = 0;
+      state.appliedVoucher = null;
+    },
+
+    applyVoucher: (state, action) => {
+      state.appliedVoucher = action.payload;
+    },
+
+    removeVoucher: (state) => {
+      state.appliedVoucher = null;
     },
   },
 });
@@ -85,7 +102,10 @@ export const {
   removeCart,
   increaseQuantity,
   decreaseQuantity,
+  updateQuantity,
   clearCart,
   setCart,
+  applyVoucher,
+  removeVoucher,
 } = CartSlice.actions;
 export default CartSlice.reducer;

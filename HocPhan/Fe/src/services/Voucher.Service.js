@@ -59,11 +59,15 @@ export const deleteMany= async (ids,access_token) => {
 }
 
 export const check= async (data,userId,access_token) => {
-
-  const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL}/voucher/check/${userId}`,data,{
-    headers:{
-      token:`Bearer ${access_token}`,
-    }
-  });
-  return res.data;
+  try {
+    const res = await axiosJwt.post(`${process.env.REACT_APP_API_URL}/voucher/check/${userId}`,data,{
+      headers:{
+        token:`Bearer ${access_token}`,
+      }
+    });
+    return res.data;
+  } catch (error) {
+    const errResponse = error?.response?.data;
+    throw new Error(errResponse?.message || 'Mã giảm giá không hợp lệ hoặc đã hết hạn');
+  }
 }

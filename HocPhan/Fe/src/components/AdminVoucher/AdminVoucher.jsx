@@ -135,7 +135,7 @@ const AdminVoucher = () => {
   const onFinish=(values,type) =>{
     const data = {
         code: values.code,
-        discountType: values.discountType,
+        discountType: 'percentage',
         discountValue: values.discountValue,
         minOrderValue: values.minOrderValue||0,
         usageLimit: values.usageLimit||0,
@@ -143,12 +143,9 @@ const AdminVoucher = () => {
         userLimit: values.userLimit||0,
         startDate: values.startDate.format('YYYY-MM-DD'),  
         endDate: values.endDate.format('YYYY-MM-DD'),
-      
+        maxDiscountValue: values.maxDiscountValue || 0,
     }; 
 
-    if(data.discountType==='percentage'){
-        data.maxDiscountValue=values.maxDiscountValue;
-      }
     if(type==='create'){
       mutationCreate.mutate({data,access_token: user?.access_token})
     }

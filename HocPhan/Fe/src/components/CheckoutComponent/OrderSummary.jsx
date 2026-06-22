@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './CheckoutComponent.scss';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import * as VoucherService from '../../services/Voucher.Service';
+import VoucherSelectorComponent from '../VoucherSelectorComponent/VoucherSelectorComponent';
+import { applyVoucher, removeVoucher } from '../../redux/slices/CartSlice';
 
 const OrderSummary = ({
   cartItems,
@@ -10,6 +14,21 @@ const OrderSummary = ({
   paymentMethod,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const appliedVoucher = useSelector((state) => state.cart.appliedVoucher);
+
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
+
+  useEffect(() => {
+    if (appliedVoucher) {
+      setCouponInput(appliedVoucher.code);
+    } else {
+      setCouponInput('');
+    }
+  }, [appliedVoucher]);
 
   useEffect(() => {
     if (!cartItems || cartItems.length === 0) {
@@ -33,16 +52,67 @@ const OrderSummary = ({
       shipping = 0;
     }
 
-    const finalPrice = Math.max(0, Math.floor(total + shipping));
+    let discount = 0;
+    if (appliedVoucher) {
+      discount = (total * appliedVoucher.discountValue) / 100;
+      if (appliedVoucher.maxDiscountValue > 0 && discount > appliedVoucher.maxDiscountValue) {
+        discount = appliedVoucher.maxDiscountValue;
+      }
+    }
+
+    const finalPrice = Math.max(0, Math.floor(total + shipping - discount));
 
     setOrderSummary({
       totalPrice: total,
       shipping,
-      discountCode: null,
-      discountValue: 0,
+      discountCode: appliedVoucher ? appliedVoucher.code : null,
+      discountValue: discount,
       finalPrice,
     });
-  }, [cartItems, setOrderSummary]);
+  }, [cartItems, appliedVoucher, setOrderSummary]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) {
+      setCouponError('Vui lòng nhập mã giảm giá');
+      return;
+    }
+    setIsCheckingCoupon(true);
+    setCouponError('');
+    try {
+      const total = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+      const res = await VoucherService.check(
+        { code: couponInput.trim(), cartTotal: total },
+        user?.id,
+        user?.access_token
+      );
+      if (res?.status === 'OK' && res?.data) {
+        dispatch(applyVoucher(res.data));
+        setCouponError('');
+      } else {
+        setCouponError(res?.message || 'Áp dụng mã thất bại');
+      }
+    } catch (err) {
+      setCouponError(err.message || 'Mã giảm giá không hợp lệ hoặc đã hết hạn');
+      dispatch(removeVoucher());
+    } finally {
+      setIsCheckingCoupon(false);
+    }
+  };
+
+  const handleSelectVoucher = (voucher) => {
+    dispatch(applyVoucher(voucher));
+    setCouponError('');
+  };
+
+  const handleRemoveCoupon = () => {
+    dispatch(removeVoucher());
+    setCouponError('');
+  };
+
+  const totalPrice = cartItems?.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0
+  ) || 0;
 
   return (
     <div className="checkout_right">
@@ -104,6 +174,17 @@ const OrderSummary = ({
             </td>
           </tr>
 
+          {orderSummary?.discountValue > 0 && (
+            <tr>
+              <td>
+                <strong>Giảm giá ({orderSummary?.discountCode})</strong>
+              </td>
+              <td style={{ textAlign: 'right', fontWeight: 'bold', color: '#ff4d4f' }}>
+                -{orderSummary?.discountValue?.toLocaleString()}₫
+              </td>
+            </tr>
+          )}
+
           <tr>
             <td>
               <strong>Phí ship</strong>
@@ -123,6 +204,55 @@ const OrderSummary = ({
           </tr>
         </tbody>
       </table>
+
+      {/* Coupon input section */}
+      <div className="coupon_section">
+        {/* Row 1: Input */}
+        <div style={{ marginBottom: '8px' }}>
+          <input
+            type="text"
+            placeholder="Nhập mã giảm giá..."
+            value={couponInput}
+            onChange={(e) => setCouponInput(e.target.value)}
+            disabled={!!appliedVoucher}
+            className="coupon_input"
+            style={{ width: '100%', height: '38px', boxSizing: 'border-box' }}
+          />
+        </div>
+        {/* Row 2: Buttons */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {appliedVoucher ? (
+            <button 
+              className="coupon_btn_remove" 
+              onClick={handleRemoveCoupon}
+              style={{ flex: 1, height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              Hủy mã
+            </button>
+          ) : (
+            <button 
+              className="coupon_btn_apply" 
+              onClick={handleApplyCoupon} 
+              disabled={isCheckingCoupon}
+              style={{ flex: 1, height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap' }}
+            >
+              {isCheckingCoupon ? 'Đang check...' : 'Áp dụng'}
+            </button>
+          )}
+          <div style={{ flex: 1 }}>
+            <VoucherSelectorComponent
+              cartTotal={totalPrice}
+              onSelect={handleSelectVoucher}
+            />
+          </div>
+        </div>
+        {couponError && <div className="coupon_error">{couponError}</div>}
+        {appliedVoucher && (
+          <div className="coupon_success">
+            Đã áp dụng mã <strong>{appliedVoucher.code}</strong> (Giảm {appliedVoucher.discountValue}%)
+          </div>
+        )}
+      </div>
 
       <p className="privacy_note">
         Thông tin cá nhân của bạn sẽ được sử dụng để xử lý đơn hàng theo{' '}

@@ -17,7 +17,28 @@ const VoucherSelectorComponent = ({ cartTotal, onSelect }) => {
 
   return (
     <>
-      <Button style={{margin:'0px 2px',height:'35px'}}  onClick={() => setVisible(true)}>Chọn mã</Button>
+      <button 
+        style={{
+          width: '100%',
+          height: '38px',
+          padding: '0 16px',
+          borderRadius: '8px',
+          border: '1.5px solid #22c55e',
+          backgroundColor: 'white',
+          color: '#22c55e',
+          fontWeight: '600',
+          fontSize: '14px',
+          cursor: 'pointer',
+          whiteSpace: 'nowrap',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'all 0.2s ease',
+        }}
+        onClick={() => setVisible(true)}
+      >
+        Chọn mã
+      </button>
       <Modal
         title="Danh sách mã giảm giá"
         open={visible}
